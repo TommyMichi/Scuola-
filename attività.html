@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Victorian Chronicle – Classroom Activity</title>
+<link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=IM+Fell+English:ital@0;1&family=IM+Fell+English+SC&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1008;
+    --paper: #f2e8d0;
+    --paper-dark: #e0d0a8;
+    --sepia: #8b6f47;
+    --accent: #5c1a1a;
+    --rule: #3a2a10;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #2a1f0e;
+    background-image: repeating-linear-gradient(45deg,rgba(0,0,0,0.03) 0px,rgba(0,0,0,0.03) 1px,transparent 1px,transparent 8px);
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'IM Fell English', serif;
+    color: var(--ink);
+  }
+  .wrapper { max-width: 900px; margin: 0 auto; }
+
+  .panel {
+    background: var(--paper);
+    border: 3px double var(--rule);
+    padding: 20px 28px;
+    margin-bottom: 24px;
+    box-shadow: 4px 4px 0 #1a0f04, inset 0 0 40px rgba(139,111,71,0.1);
+  }
+  .panel-title {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-align: center;
+    border-bottom: 1px solid var(--sepia);
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+
+  /* INSTRUCTIONS */
+  .timer-badge {
+    float: right;
+    background: var(--accent);
+    color: var(--paper);
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    padding: 3px 10px;
+    border-radius: 2px;
+    margin-top: -2px;
+  }
+  .instructions ol { padding-left: 22px; font-size: 0.9rem; line-height: 2; }
+
+  /* EVENTS */
+  .events-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .event-card {
+    border: 2px solid var(--sepia);
+    padding: 14px 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .event-card:hover { background: var(--paper-dark); border-color: var(--accent); }
+  .event-card.selected { background: var(--accent); color: var(--paper); border-color: var(--accent); }
+  .event-card.selected .event-num { color: var(--paper-dark); }
+  .event-card.selected .event-sub { color: rgba(242,232,208,0.75); }
+  .event-num { font-family: 'UnifrakturMaguntia', cursive; font-size: 2rem; color: var(--accent); line-height: 1.1; }
+  .event-title { font-family: 'IM Fell English SC', serif; font-size: 0.76rem; letter-spacing: 0.06em; font-weight: bold; line-height: 1.4; margin-top: 6px; }
+  .event-sub { font-style: italic; font-size: 0.7rem; color: var(--sepia); margin-top: 5px; line-height: 1.4; }
+  .event-card.selected .event-sub { color: rgba(242,232,208,0.75); }
+
+  .hints-box {
+    background: rgba(92,26,26,0.07);
+    border-left: 4px solid var(--accent);
+    padding: 12px 18px;
+    margin-top: 14px;
+    font-size: 0.83rem;
+    line-height: 1.85;
+    display: none;
+    animation: fadeIn 0.35s ease;
+  }
+  .hints-box.visible { display: block; }
+  .hints-box strong { font-family: 'IM Fell English SC', serif; color: var(--accent); display: block; margin-bottom: 5px; font-size: 0.72rem; letter-spacing: 0.1em; }
+
+  /* STRUCTURE */
+  .structure-steps { counter-reset: step; list-style: none; padding: 0; }
+  .structure-steps li {
+    counter-increment: step;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 11px;
+    font-size: 0.87rem;
+    line-height: 1.7;
+  }
+  .structure-steps li::before {
+    content: counter(step);
+    font-family: 'UnifrakturMaguntia', cursive;
+    font-size: 1.4rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  .step-title { font-family: 'IM Fell English SC', serif; font-size: 0.74rem; letter-spacing: 0.07em; display: block; }
+  .step-desc { color: var(--sepia); font-style: italic; font-size: 0.81rem; }
+
+  /* VOCABULARY */
+  .vocab-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 24px; }
+  .vocab-item { font-size: 0.81rem; line-height: 1.6; border-bottom: 1px dotted rgba(139,111,71,0.3); padding-bottom: 4px; }
+  .vocab-phrase { font-family: 'IM Fell English SC', serif; font-size: 0.73rem; color: var(--accent); }
+  .vocab-note { color: var(--sepia); font-style: italic; font-size: 0.76rem; }
+
+  /* PLOT SECTION */
+  .plot-toggle-btn {
+    display: block;
+    width: 100%;
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    padding: 12px 20px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.2s;
+    box-shadow: 3px 3px 0 #1a0f04;
+    margin-bottom: 0;
+  }
+  .plot-toggle-btn:hover { background: #7a2020; }
+  .plot-toggle-btn .arrow { display: inline-block; transition: transform 0.3s; margin-left: 10px; }
+  .plot-toggle-btn.open .arrow { transform: rotate(180deg); }
+
+  .plot-body {
+    display: none;
+    border-top: 2px solid var(--rule);
+    padding: 22px 28px 26px;
+    animation: fadeIn 0.4s ease;
+    background: var(--paper);
+    border: 3px double var(--rule);
+    border-top: none;
+    box-shadow: 4px 4px 0 #1a0f04;
+    margin-bottom: 24px;
+  }
+  .plot-body.visible { display: block; }
+
+  .plot-part {
+    margin-bottom: 22px;
+    padding-bottom: 18px;
+    border-bottom: 1px dotted var(--sepia);
+  }
+  .plot-part:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .plot-part-title {
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+  .plot-part p {
+    font-size: 0.87rem;
+    line-height: 1.85;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .plot-part p:last-child { margin-bottom: 0; }
+
+  /* NEWSPAPER */
+  .newspaper {
+    background: var(--paper);
+    border: 3px double var(--rule);
+    box-shadow: 4px 4px 0 #1a0f04, inset 0 0 60px rgba(139,111,71,0.1);
+    margin-bottom: 24px;
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+  .newspaper.visible { display: block; }
+  .masthead {
+    border-bottom: 4px double var(--rule);
+    padding: 18px 28px 14px;
+    text-align: center;
+    background: linear-gradient(to bottom, rgba(139,111,71,0.07), transparent);
+  }
+  .masthead-name { font-family: 'UnifrakturMaguntia', cursive; font-size: 3rem; line-height: 1; color: var(--ink); text-shadow: 1px 1px 0 rgba(139,111,71,0.3); }
+  .masthead-sub { font-family: 'IM Fell English SC', serif; font-size: 0.66rem; letter-spacing: 0.22em; color: var(--sepia); margin-top: 4px; }
+  .masthead-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    color: var(--sepia);
+    margin-top: 8px;
+    border-top: 1px solid var(--sepia);
+    padding-top: 6px;
+    align-items: center;
+  }
+  .meta-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--sepia);
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    color: var(--sepia);
+    width: 190px;
+    text-align: center;
+    outline: none;
+  }
+  .article-area { padding: 22px 30px 26px; }
+  .field-label { font-family: 'IM Fell English SC', serif; font-size: 0.59rem; letter-spacing: 0.2em; color: var(--sepia); margin-bottom: 5px; }
+  .title-row { border-bottom: 2px solid var(--rule); margin-bottom: 18px; padding-bottom: 12px; }
+  .title-input {
+    width: 100%; background: transparent; border: none;
+    border-bottom: 1px dashed var(--sepia);
+    font-family: 'IM Fell English SC', serif;
+    font-size: 1.55rem; letter-spacing: 0.04em; color: var(--ink);
+    outline: none; padding-bottom: 4px;
+  }
+  .title-input::placeholder { color: rgba(139,111,71,0.45); font-style: italic; }
+  .standfirst-input {
+    width: 100%; background: transparent; border: none;
+    border-bottom: 1px dashed var(--sepia);
+    font-family: 'IM Fell English', serif; font-style: italic;
+    font-size: 0.93rem; color: var(--ink);
+    outline: none; padding: 6px 0 3px; margin-top: 8px;
+  }
+  .standfirst-input::placeholder { color: rgba(139,111,71,0.4); }
+  .body-input {
+    width: 100%; min-height: 260px; background: transparent; border: none;
+    border-bottom: 1px dashed var(--sepia);
+    font-family: 'IM Fell English', serif;
+    font-size: 0.9rem; line-height: 1.9; color: var(--ink);
+    outline: none; resize: vertical; padding-bottom: 6px;
+  }
+  .body-input::placeholder { color: rgba(139,111,71,0.4); font-style: italic; }
+  .byline-row { display: flex; gap: 20px; margin-top: 16px; border-top: 1px solid var(--sepia); padding-top: 12px; }
+  .byline-group { flex: 1; }
+  .byline-input {
+    width: 100%; background: transparent; border: none;
+    border-bottom: 1px dashed var(--sepia);
+    font-family: 'IM Fell English', serif; font-style: italic;
+    font-size: 0.84rem; color: var(--ink); outline: none; padding-bottom: 2px;
+  }
+  .byline-input::placeholder { color: rgba(139,111,71,0.4); }
+
+  .print-btn {
+    display: none;
+    margin: 0 auto 32px;
+    background: var(--accent);
+    color: var(--paper);
+    border: none;
+    font-family: 'IM Fell English SC', serif;
+    font-size: 0.83rem;
+    letter-spacing: 0.18em;
+    padding: 12px 36px;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 #1a0f04;
+    transition: all 0.15s;
+  }
+  .print-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 #1a0f04; }
+  .print-btn:active { transform: translate(1px,1px); box-shadow: 2px 2px 0 #1a0f04; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+
+  @media (max-width:600px) {
+    .events-grid { grid-template-columns:1fr; }
+    .vocab-grid { grid-template-columns:1fr; }
+    .byline-row { flex-direction:column; gap:10px; }
+    .masthead-name { font-size:2.1rem; }
+  }
+  @media print {
+    body { background:white; padding:0; }
+    .panel, .print-btn, .plot-toggle-btn, .plot-body { display:none !important; }
+    .newspaper { display:block !important; box-shadow:none; border:2px double #333; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <!-- INSTRUCTIONS -->
+  <div class="panel">
+    <div class="panel-title">
+      <span class="timer-badge">⏱ 20 min</span>
+      ✦ Instructions for Pairs ✦
+    </div>
+    <ol class="instructions">
+      <li>In pairs, choose one of the three events below.</li>
+      <li>Fill in the newspaper: headline, standfirst, article body, and bylines.</li>
+      <li>Use a <strong>formal and dramatic tone</strong>, as a Victorian journalist would in 1886.</li>
+      <li>Refer to the suggested vocabulary and article structure.</li>
+      <li>When finished, click <em>"Print your article"</em> to present it to the class.</li>
+    </ol>
+  </div>
+
+  <!-- PLOT SECTION -->
+  <button class="plot-toggle-btn" id="plotBtn" onclick="togglePlot()">
+    ✦ The Strange Case of Dr Jekyll and Mr Hyde — Plot Summary <span class="arrow">▼</span>
+  </button>
+  <div class="plot-body" id="plotBody">
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 1 — Hyde and the Story of Enfield</div>
+      <p>The novel opens on a quiet Sunday. The lawyer Gabriel John Utterson and his cousin Richard Enfield are taking one of their regular walks through London. They pass a run-down door set into a wall, which stands out in an otherwise busy and well-kept neighbourhood. The sight of it triggers a memory in Enfield.</p>
+      <p>He tells Utterson what he once witnessed late at night: a young girl was running along the street when she collided with a short, strange-looking man. Instead of stopping to help her, the man simply trampled over her and walked on without a word. Enfield chased after him, grabbed him, and brought him back to the girl and her family. The man had something deeply unpleasant about him that Enfield could not quite put into words — not just ugly, but somehow <em>wrong</em>.</p>
+      <p>The family demanded compensation. Since the man had no cash on him, he led Enfield to that very door. He went inside and came back with a cheque signed not in his own name, but in the name of Dr Henry Jekyll. Enfield assumed it was a forgery, but the cheque turned out to be completely genuine. The man had introduced himself as Edward Hyde.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 2 — Utterson's Suspicions</div>
+      <p>Utterson is troubled by this story. As Jekyll's lawyer, he knows the contents of his friend's will: if Jekyll were to die or disappear, everything he owns would go to Edward Hyde. Utterson finds this arrangement deeply worrying. He tries to ask Dr Hastie Lanyon, a mutual friend and colleague of Jekyll, about Hyde, but Lanyon knows nothing useful.</p>
+      <p>Utterson then decides to take matters into his own hands. He begins watching the mysterious door, waiting for Hyde to appear. After several days of patience, he finally succeeds. He stops Hyde in the street, looks at his face, and feels the same unexplainable disgust that Enfield described — Hyde is short, pale, and rough-voiced, and there is something about him that feels deeply wrong, though it is impossible to say exactly what.</p>
+      <p>Utterson goes straight to Jekyll's house afterwards. The butler, Poole, tells him the doctor is out, but reveals that Hyde has his own key to the laboratory through a back entrance, and that the servants have been told to follow his instructions without question. Utterson becomes more and more convinced that Hyde is blackmailing his old friend.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 3 — A Conversation with Jekyll</div>
+      <p>Two weeks later, after a dinner with friends, Utterson and Jekyll are left alone together. Utterson brings up the will and his concerns about Hyde. Jekyll brushes it off. He says he can get rid of Hyde whenever he wants to, and that Utterson has nothing to worry about — but he refuses to explain anything further. The conversation ends without any real answers, and Utterson leaves more puzzled than before.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 4 — The Murder of Sir Danvers Carew</div>
+      <p>About a year passes. Then London is shocked by a brutal murder. Sir Danvers Carew, a well-respected Member of Parliament, has been beaten to death in the street. A servant girl who witnessed the attack from her window identified the killer immediately: it was Edward Hyde. She watched as he attacked the elderly man with a heavy stick, hitting him over and over with extraordinary violence.</p>
+      <p>A letter addressed to Utterson is found on the body, and Utterson leads the police to Hyde's apartment. Inside they find the other half of the broken walking stick used in the murder. But Hyde himself is nowhere to be found — he has vanished completely.</p>
+      <p>That same afternoon, Utterson visits Jekyll. He finds him in a terrible state. Jekyll swears he wants nothing more to do with Hyde and says he has already received a farewell letter from him, delivered by hand. But when Utterson steps outside and asks Poole about the messenger, Poole says nobody came to the door that day — only circulars arrived in the post. Back at his office, Utterson's secretary Guest notices that the handwriting in Hyde's letter looks remarkably similar to Jekyll's own. Utterson is now more suspicious than ever.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 5 — Hyde Disappears and Jekyll Withdraws</div>
+      <p>The police put out a reward for Hyde, but he has disappeared without a trace. For a while, things seem to improve: Jekyll comes out of his shell, sees his friends again, and appears cheerful and sociable. This period of calm lasts about two months. Then, on 8 January, Jekyll suddenly shuts himself away again, refusing all visitors and becoming more isolated than ever.</p>
+      <p>Worried, Utterson goes to see Lanyon, hoping for some news. But he finds him looking terribly ill, even though he had been perfectly well just a few days earlier. Lanyon is vague and evasive. He tells Utterson, in a strange and mysterious way, that after his death the full truth will come out. Utterson also writes a letter directly to Jekyll asking for an explanation, but receives no reply.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 6 — The Death of Lanyon and the Sealed Envelope</div>
+      <p>Fifteen days after Utterson's visit, Lanyon dies. Going through his study, Utterson finds an envelope with a note saying it should be given to him and destroyed if he dies first. Inside is a second sealed envelope, marked: <em>'to be opened only after the death or disappearance of Henry Jekyll.'</em> Utterson notices the same strange phrase again — <em>disappearance</em> — the same word used in Jekyll's will. He places the envelope in his safe and waits, determined not to open it before the right moment comes.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 7 — Jekyll at the Window and the Breaking Down of the Door</div>
+      <p>One Sunday, during their usual walk, Utterson and Enfield catch a glimpse of Jekyll at his upstairs window. They call up to him and a brief conversation begins — but then something happens to Jekyll's face, an expression so disturbing and frightening that both men feel a sudden chill, and Jekyll abruptly closes the window and disappears.</p>
+      <p>A few evenings later, Poole arrives at Utterson's door in a state of great distress. For several days, he explains, someone has been locked inside Jekyll's laboratory. The person — short, who reminds Poole of Hyde — has been sending the servants to various pharmacies to find a particular chemical, each time complaining that what they bring back is not the right one.</p>
+      <p>Utterson and Poole go to the house together. Standing outside the locked laboratory door, Utterson suggests that whoever is inside may have killed Jekyll and is still hiding there. They break the door down with an axe. Inside, they find the body of Edward Hyde, still twitching from the prussic acid he has just used to poison himself. Jekyll is nowhere to be seen.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 8 — Lanyon's Letter</div>
+      <p>Searching the laboratory, Utterson finds a note telling him to read Lanyon's letter first, and then Jekyll's full confession. He goes home and opens Lanyon's envelope. In it, Lanyon describes in detail a strange evening some months earlier. Hyde had come to his door, claiming Jekyll had sent him, and asked to collect a particular drawer from Jekyll's house containing a powder and other ingredients needed for a potion. Hyde was desperate — he was wanted for the murder of Carew and could not be seen in public, yet Jekyll urgently needed the mixture.</p>
+      <p>Once Lanyon handed over the ingredients, Hyde prepared the potion on the spot. Then he asked Lanyon if he wanted to witness something extraordinary. Lanyon agreed. Hyde drank the potion, and before Lanyon's eyes, he transformed back into Dr Henry Jekyll. The shock of what he had just seen was so great that it broke Lanyon completely. He never recovered, and died shortly afterwards.</p>
+    </div>
+
+    <div class="plot-part">
+      <div class="plot-part-title">Part 9 — Jekyll's Confession</div>
+      <p>Finally, Utterson reads Jekyll's long and detailed confession. Jekyll explains everything from the beginning. During his studies into human psychology, he had reached a conclusion that had been growing inside him for years: that every person contains not one nature, but two — a good side and a dark side, inseparably mixed together. He believed that if he could separate them chemically, he could live more freely.</p>
+      <p>He developed a potion and tested it on himself. The transformation worked. His dark side took shape as a new person: Mr Edward Hyde — a name that echoes the English word <em>'to hide'</em>. Hyde was shorter and younger than Jekyll, slightly hunched, with short arms and rough, hairy hands. He was driven entirely by selfish, cruel impulses, with no care for others and no moral limits. Jekyll, by contrast, remained tall, educated, and morally upright. Crucially, both identities shared the same memories.</p>
+      <p>At first Jekyll enjoyed the experiment. As Hyde, he could do things he would never allow himself as Jekyll, while his respectable life remained untouched. But over time, control slipped away. He began to transform into Hyde spontaneously, without taking the potion — Hyde was becoming the dominant identity. To recover his original form, Jekyll had to drink larger and larger doses of the mixture.</p>
+      <p>Then came the final crisis: the supply of a particular salt he used in the potion ran out. New batches from the pharmacy did not work. Jekyll eventually understood why: the original salt must have contained an unknown impurity that was essential to making the potion effective. Without it, the transformation back to Jekyll was no longer possible. He realised he would remain Hyde forever.</p>
+      <p>Jekyll wrote his confession while still under the effect of one last dose of the original potion. He locked himself in the laboratory to keep Hyde imprisoned inside. By the time Poole and Utterson broke through the door, the potion had worn off, Hyde had taken over once more, and he had taken his own life with poison. Jekyll — the man, the doctor, the respectable citizen — was gone forever.</p>
+    </div>
+
+  </div><!-- /plot-body -->
+
+  <!-- CHOOSE EVENT -->
+  <div class="panel">
+    <div class="panel-title">✦ Choose Your Event ✦</div>
+    <div class="events-grid">
+      <div class="event-card" onclick="selectEvent(0)">
+        <div class="event-num">I</div>
+        <div class="event-title">The Brutal Murder of Sir Danvers Carew</div>
+        <div class="event-sub">A Member of Parliament beaten to death in the street</div>
+      </div>
+      <div class="event-card" onclick="selectEvent(1)">
+        <div class="event-num">II</div>
+        <div class="event-title">The Mysterious Disappearance of Dr Jekyll</div>
+        <div class="event-sub">The respected doctor has vanished without explanation</div>
+      </div>
+      <div class="event-card" onclick="selectEvent(2)">
+        <div class="event-num">III</div>
+        <div class="event-title">The Death of Hyde in the Laboratory</div>
+        <div class="event-sub">An unknown body discovered in a private study in Soho</div>
+      </div>
+    </div>
+    <div class="hints-box" id="hint0">
+      <strong>✦ Guiding Questions — Event I</strong>
+      Where did the murder take place? — Who witnessed the scene? — How is the victim, Sir Danvers, described? — What do we know about the attacker (appearance, escape)? — Has Scotland Yard opened an investigation? — Are there any suspects?
+    </div>
+    <div class="hints-box" id="hint1">
+      <strong>✦ Guiding Questions — Event II</strong>
+      How many days has the doctor been missing? — Who raised the alarm? — Where was he last seen? — Was the laboratory locked from the inside? — What do colleagues and family think? — Does the police suspect foul play?
+    </div>
+    <div class="hints-box" id="hint2">
+      <strong>✦ Guiding Questions — Event III</strong>
+      Who discovered the body? — Was the deceased recognisable? — How did he die (poison, collapse…)? — Where was Dr Jekyll at the time? — What did the letter found at the scene contain? — Is the mystery solved or does it remain open?
+    </div>
+  </div>
+
+  <!-- ARTICLE STRUCTURE -->
+  <div class="panel">
+    <div class="panel-title">✦ Structure of a Victorian Newspaper Article ✦</div>
+    <ul class="structure-steps">
+      <li><div><span class="step-title">Headline</span><span class="step-desc">Short, dramatic, in small capitals. E.g.: "MOST BRUTAL OUTRAGE UPON THE EMBANKMENT"</span></div></li>
+      <li><div><span class="step-title">Standfirst</span><span class="step-desc">One italicised sentence introducing the facts. E.g.: "A distinguished Member of Parliament discovered lifeless at dawn."</span></div></li>
+      <li><div><span class="step-title">Lead Paragraph</span><span class="step-desc">Answers immediately: Who? What? Where? When? — with a solemn, horrified tone.</span></div></li>
+      <li><div><span class="step-title">Body</span><span class="step-desc">Details, witnesses, statements from police or colleagues. Formal, grave language throughout.</span></div></li>
+      <li><div><span class="step-title">Closing</span><span class="step-desc">A moral reflection or appeal to the city. E.g.: "London trembles. The law must act without delay."</span></div></li>
+    </ul>
+  </div>
+
+  <!-- VOCABULARY -->
+  <div class="panel">
+    <div class="panel-title">✦ Victorian Vocabulary ✦</div>
+    <div class="vocab-grid">
+      <div class="vocab-item"><span class="vocab-phrase">Most heinous / abominable</span><span class="vocab-note">— expressing moral outrage</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">A dastardly deed</span><span class="vocab-note">— a cowardly and wicked act</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">The perpetrator remains at large</span><span class="vocab-note">— the culprit has not been caught</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">Scotland Yard has been alerted</span><span class="vocab-note">— the Metropolitan Police are involved</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">A witness of unblemished character</span><span class="vocab-note">— a reliable, trustworthy witness</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">Circumstances of the gravest nature</span><span class="vocab-note">— a very serious situation</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">The fog-laden streets of London</span><span class="vocab-note">— Victorian atmosphere</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">It is with profound dismay that…</span><span class="vocab-note">— formal opening for bad news</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">The authorities are at a loss</span><span class="vocab-note">— the police are baffled</span></div>
+      <div class="vocab-item"><span class="vocab-phrase">This journal implores its readers…</span><span class="vocab-note">— editorial appeal to the public</span></div>
+    </div>
+  </div>
+
+  <!-- NEWSPAPER EDITOR -->
+  <div class="newspaper" id="newspaper">
+    <div class="masthead">
+      <div class="masthead-name">The Victorian Chronicle</div>
+      <div class="masthead-sub">Devoted to Truth, Justice &amp; the Enlightenment of the Public</div>
+      <div class="masthead-meta">
+        <span>London, England</span>
+        <input class="meta-input" id="date-input" placeholder="Date: e.g. Thursday, 18 October 1886" />
+        <input class="meta-input" id="authors-input" placeholder="Written by: pair names" />
+      </div>
+    </div>
+    <div class="article-area">
+      <div class="title-row">
+        <div class="field-label">✦ Headline</div>
+        <input class="title-input" id="headline" placeholder="WRITE YOUR HEADLINE HERE…" />
+        <input class="standfirst-input" id="standfirst" placeholder="Standfirst: one italicised sentence introducing the facts…" />
+      </div>
+      <div class="field-label">✦ Article Body</div>
+      <textarea class="body-input" id="body-text" placeholder="It is with profound dismay that this journal must report to its readers…&#10;&#10;(Develop your lead, body paragraphs, and closing. Tone: formal, dramatic, Victorian.)"></textarea>
+      <div class="byline-row">
+        <div class="byline-group">
+          <div class="field-label">Reporter</div>
+          <input class="byline-input" placeholder="e.g. Mr. J. H. Watson, Special Correspondent" />
+        </div>
+        <div class="byline-group">
+          <div class="field-label">Editor-in-Chief</div>
+          <input class="byline-input" placeholder="e.g. Miss E. Morstan, Editor in Chief" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="print-btn" id="print-btn" onclick="window.print()">✦ Print your article ✦</button>
+
+</div><!-- /wrapper -->
+
+<script>
+  function selectEvent(i) {
+    document.querySelectorAll('.event-card').forEach((c,idx) => c.classList.toggle('selected', idx===i));
+    ['hint0','hint1','hint2'].forEach((id,idx) => document.getElementById(id).classList.toggle('visible', idx===i));
+    const news = document.getElementById('newspaper');
+    news.classList.add('visible');
+    document.getElementById('print-btn').style.display = 'block';
+    news.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function togglePlot() {
+    const body = document.getElementById('plotBody');
+    const btn  = document.getElementById('plotBtn');
+    const isOpen = body.classList.toggle('visible');
+    btn.classList.toggle('open', isOpen);
+    if (isOpen) body.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+</script>
+</body>
+</html>
